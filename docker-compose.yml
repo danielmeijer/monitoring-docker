@@ -24,6 +24,21 @@ services:
       - monitoring
     restart: always
 
+  loki:
+    image: grafana/loki:master
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:master
+    volumes:
+      - /var/log/nginx:/var/log
+      - ./promtail_config:/etc/promtail/
+    command: -config.file=/etc/promtail/docker-config.yaml
+    networks:
+      - monitoring
+
   grafana:
     image: grafana/grafana
     ports:
