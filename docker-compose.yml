@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.22
+#    ports:
+#      - 9090:9090
+    volumes:
+      - ./prometheus_config:/etc/prometheus
+    networks:
+      - monitoring
+    restart: always
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:v0.18.0
+    networks:
+      - monitoring
+    restart: always
+
+  node_exporter:
+    image: prom/node-exporter:v1.0.1
+    networks:
+      - monitoring
+    restart: always
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SERVER_ROOT_URL=<base_url>
+      - GF_SECURITY_ADMIN_PASSWORD=<PASSWORD>
+    volumes:
+      - "./grafana_data:/var/lib/grafana"
+    networks:
+      - monitoring
+    restart: always
+networks:
+  monitoring:
+    driver: bridge
