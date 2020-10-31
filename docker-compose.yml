@@ -29,6 +29,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - monitoring
+    restart: always
 
   promtail:
     image: grafana/promtail:master
@@ -38,6 +39,7 @@ services:
     command: -config.file=/etc/promtail/docker-config.yaml
     networks:
       - monitoring
+    restart: always
 
   grafana:
     image: grafana/grafana
