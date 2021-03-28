@@ -3,7 +3,7 @@ version: '3'
 services:
 
   prometheus:
-    image: prom/prometheus:v2.22
+    image: prom/prometheus:v2.25.2
 #    ports:
 #      - 9090:9090
     volumes:
@@ -19,35 +19,34 @@ services:
     restart: always
 
   node_exporter:
-    image: prom/node-exporter:v1.0.1
+    image: prom/node-exporter:v1.1.2
     networks:
       - monitoring
     restart: always
 
   loki:
-    image: grafana/loki:master
+    image: grafana/loki:2.2.0
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - monitoring
     restart: always
 
   promtail:
-    image: grafana/promtail:master
+    image: grafana/promtail:2.2.0
     volumes:
-      - /var/log/nginx:/var/log
+      - ../private-proxy-docker/logs/:/var/log/private
+      - ../../public-proxy-docker/logs/:/var/log/public
       - ./promtail_config:/etc/promtail/
-    command: -config.file=/etc/promtail/docker-config.yaml
+    command: -config.file=/etc/promtail/nginx.yaml
     networks:
       - monitoring
     restart: always
 
   grafana:
-    image: grafana/grafana
-    ports:
-      - 3000:3000
+    image: grafana/grafana:7.5.1
     environment:
-      - GF_SERVER_ROOT_URL=<base_url>
-      - GF_SECURITY_ADMIN_PASSWORD=<PASSWORD>
+      - GF_SERVER_ROOT_URL=${grafana_root_url}
+      - GF_SECURITY_ADMIN_PASSWORD=${grafana_admin_pass}
     volumes:
       - "./grafana_data:/var/lib/grafana"
     networks:
