@@ -33,9 +33,9 @@ services:
 
   promtail:
     image: grafana/promtail:2.2.0
-    volumes:
+    volumes: # Add your nginx log path and promtail configuration
       - ../private-proxy-docker/logs/:/var/log/private
-      - ../../public-proxy-docker/logs/:/var/log/public
+      - ../../public/public-proxy-docker/logs/:/var/log/public
       - ./promtail_config:/etc/promtail/
     command: -config.file=/etc/promtail/nginx.yaml
     networks:
